@@ -1,2 +1,2 @@
 #!/bin/sh
-python gradient.py | python virtual/virtualbar.py
+python space.py | python virtual/virtualbar.py

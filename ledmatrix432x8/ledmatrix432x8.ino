@@ -30,9 +30,7 @@
 
 #define SEGMENT_WIDTH (8*6)                   /* bits */
 #define SEGMENT_DATA_WIDTH (SEGMENT_WIDTH+8)  /* bits, includes address line */
-#define N_SEGMENTS_PER_LINE (3)
-#define N_LINES (3)
-#define N_SEGMENTS (N_SEGMENTS_PER_LINE*N_LINES)
+#define N_SEGMENTS (3*3)
 
 #define MATRIX_WIDTH (SEGMENT_WIDTH*N_SEGMENTS)
 #define MATRIX_DATA_WIDTH (SEGMENT_DATA_WIDTH*N_SEGMENTS)
@@ -40,9 +38,6 @@
 #define SPI_WRITE_BITS (8) /* changing this requires changing code */
 #define LINE_WRITE_COUNT ( (MATRIX_DATA_WIDTH+SPI_WRITE_BITS-1)/SPI_WRITE_BITS )
 #define MATRIX_HEIGHT (8) /* logical height */
-
-#define LINE_WIDTH (SEGMENT_WIDTH*N_SEGMENTS_PER_LINE)
-#define LINE_SIZE (LINE_WIDTH*MATRIX_HEIGHT)
 
 #define MATRIX_SIZE (MATRIX_WIDTH*MATRIX_HEIGHT)
 #define MATRIX_BUFSIZE ( MATRIX_SIZE + LINE_WRITE_COUNT*SPI_WRITE_BITS-MATRIX_WIDTH )
@@ -287,22 +282,21 @@ static int usb_getchar(void)
 
 void read_frame(void)
 {
-	uint32_t seg_ix = 0, row_ix=0, col_ix = 0, line_ix = 0;
+	uint32_t seg_ix = 0, row_ix=0, col_ix = 0;
 	int v;
 
-	for (line_ix = 0; line_ix<MATRIX_WIDTH; line_ix+=LINE_WIDTH)
-		for (row_ix = 0; row_ix<8; row_ix+=1)
-			for (seg_ix = 0; seg_ix<LINE_WIDTH; seg_ix+=8)
-				for (col_ix = line_ix+row_ix+seg_ix; col_ix<MATRIX_SIZE; col_ix+=MATRIX_WIDTH)
-				{
-					if (rx_i<fastpath)
-						v = rx_packet->buf[rx_i++];
-					else
-						v = usb_getchar();
-					rx_cur[col_ix] = gamma_map[v&0x7f];
-					if (v&0x80)
-						return;
-				}
+	for (row_ix = 0; row_ix<8; row_ix+=1)
+		for (seg_ix = row_ix; seg_ix<MATRIX_WIDTH; seg_ix+=8)
+			for (col_ix = seg_ix; col_ix<MATRIX_SIZE; col_ix+=MATRIX_WIDTH)
+			{
+				if (rx_i<fastpath)
+					v = rx_packet->buf[rx_i++];
+				else
+					v = usb_getchar();
+				rx_cur[col_ix] = gamma_map[v&0x7f];
+				if (v&0x80)
+					return;
+			}
 
 	for(;;)
 	{

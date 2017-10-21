@@ -37,9 +37,9 @@ class SpaceAni(object):
 					r0, r1 = 1-ratio, ratio
 					if c0 != 0 or c1 != 0:
 						if c0 == 0:
-							c0 == self.frame[base+x]
+							c0 = self.frame[base+x]
 						elif c1 == 0:
-							c1 == self.frame[base+x]
+							c1 = self.frame[base+x]
 
 						self.frame[base+x] = int(r0*c0 + r1*c1)
 

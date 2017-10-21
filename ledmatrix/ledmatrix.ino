@@ -58,7 +58,7 @@ uint32_t tx_buf1[LINE_WRITE_COUNT];
 
 /*
 
-def calc_gamma(gamma=2.5, cut_off=0x2):
+def calc_gamma(gamma=2.5, cut_off=0x2, inv=False):
     _max = 0x80
     factor = _max / (float(0x7f)**gamma)
     gamma_values = [ (x**gamma * factor) for x in range(0x80) ]
@@ -71,9 +71,13 @@ def calc_gamma(gamma=2.5, cut_off=0x2):
             gamma_values[i] = _max
 		elif v > _max - cut_off:
 			gamma_values[i] = _max-cut_off;
-    return [int(128 - x) for x in gamma_values]
+		if inv:
+			gamma_values[i] = int(128-gamma_values[i])
+		else:
+			gamma_values[i] = int(gamma_values[i])
+    return gamma_values
 
-calc_gamma()
+calc_gamma(inv=True)
 
  */
 

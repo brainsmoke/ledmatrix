@@ -72,16 +72,16 @@ def calc_gamma(gamma=2.5, cut_off=0x8, inv=False):
     for i,v in enumerate(gamma_values):
         if v < cut_off/2.:
             gamma_values[i] = 0
-		elif v < cut_off:
+        elif v < cut_off:
             gamma_values[i] = cut_off
         if v > _max - cut_off/2.:
             gamma_values[i] = _max
-		elif v > _max - cut_off:
-			gamma_values[i] = _max-cut_off;
-		if inv:
-			gamma_values[i] = int(128-gamma_values[i])
-		else:
-			gamma_values[i] = int(gamma_values[i])
+        elif v > _max - cut_off:
+            gamma_values[i] = _max-cut_off;
+        if inv:
+            gamma_values[i] = int(128-gamma_values[i])
+        else:
+            gamma_values[i] = int(gamma_values[i])
     return gamma_values
 
 calc_gamma()

@@ -1,5 +1,7 @@
 import sys,time,random,math
 
+import font
+
 SHIP = [
 [ 0x00, 0x0a, 0x74, 0x88, 0xb5, 0xc8, 0xc3, 0xcd, 0xe7, 0xf7, 0xfd, 0xff, 0xff, 0xff, 0xff, 0xcb, 0x34, 0x00, 0x00, 0x00, 0x00, 0x19, 0x60, 0x82, 0x7c, 0x7c, 0x82, 0x60, 0x19, 0x00, 0x00, 0x00, 0x00, 0x00 ],
 [ 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x39, 0x7a, 0xd2, 0xff, 0xff, 0xcc, 0x34, 0x00, 0x00, 0x00, 0x00, 0x26, 0x98, 0xde, 0xf8, 0xff, 0xff, 0xff, 0xff, 0xf8, 0xde, 0x98, 0x26, 0x00, 0x00, 0x00 ],
@@ -19,29 +21,44 @@ class SpaceAni(object):
 			self.ship_x = -random.randint(30, 80)
 			self.new_dx = 1.
 
-	def paint_ship(self, x):
+	def move_text(self):
+		self.text_x -= self.dx/16
+		if self.text_x < -self.text_size:
+			self.cur_text += 1
+			self.cur_text %= len(self.texts)
+			self.text_x = self.w+10
+			self.text_size = self.font.text_size(self.texts[self.cur_text][0])/2
+
+	def paint_wide_bitmap(self, x, y, bitmap, intensity=255):
 		ship_x = x - .75
 		grid_x = int(math.floor(ship_x))+1
 		diff = grid_x-ship_x
 		off = min(1.999999, max(0, 2*diff)) # on 2x grid
 		ratio = off-int(math.floor(off))   # on 2x grid
 		off = int(math.floor(off))          # on 2x grid
-		for y in range(8):
-			base = self.w*y
-			for dx in range(16):
+		for dy in range(8):
+			base = self.w*(y+dy)
+			for dx in range((len(bitmap[dy])-1)//2):
 				x = grid_x+dx
 				if 0 <= x < self.w:
 					arr_x = off+2*dx
-					c0 = SHIP[y][arr_x]
-					c1 = SHIP[y][arr_x+1]
+					a0 = bitmap[dy][arr_x]
+					a1 = bitmap[dy][arr_x+1]
+					c0 = a0*intensity + self.frame[base+x]*(255-a0)
+					c1 = a1*intensity + self.frame[base+x]*(255-a1)
 					r0, r1 = 1-ratio, ratio
-					if c0 != 0 or c1 != 0:
-						if c0 == 0:
-							c0 = self.frame[base+x]
-						elif c1 == 0:
-							c1 = self.frame[base+x]
+					self.frame[base+x] = int(r0*c0 + r1*c1)/255
 
-						self.frame[base+x] = int(r0*c0 + r1*c1)
+	def paint_text(self, x):
+		off = 0
+		text, intensity = self.texts[self.cur_text]
+		for i,c in enumerate(text):
+			g, keming = self.font.get_glyph(c)
+			self.paint_wide_bitmap(x+off/2.,0,g, intensity)
+			off += keming
+
+	def paint_ship(self, x):
+		self.paint_wide_bitmap(x,0,SHIP)
 
 	def add_star(self):
 		self.stars.append( [ self.w, random.randint(0,self.h-1), random.randint(15, 80)/10. ] )
@@ -86,7 +103,7 @@ class SpaceAni(object):
 		for i in xrange(len(self.frame)):
 			self.frame[i]=0
 
-	def __init__(self, w, h):
+	def __init__(self, w, h, texts):
 		self.w, self.h = w, h
 		self.frame = [0]*(w*h)
 		self.stars = []
@@ -96,18 +113,28 @@ class SpaceAni(object):
 		self.new_dx = 1.
 		self.next_dx_change = 1
 		self.dt = 1/16.
+		self.font = font.Font()
+		self.texts = texts
+		self.cur_text = 0
+		self.text_x = self.w+10
+		self.text_size = self.font.text_size(self.texts[self.cur_text][0])/2
 
 	def next_frame(self, i, t):
 		self.clear()
 		self.change_dx()
 		self.move_stars()
 		self.paint_stars()
+		self.move_text()
+		self.paint_text(self.text_x)
 		self.move_ship()
 		self.paint_ship(self.ship_x)
 		return [ min(255, x) for x in self.frame ]
 
 
-ani = SpaceAni(120, 8)
+ani = SpaceAni(120, 8, [ ("https://github.com/techinc/ledmatrix", 160), (''.join(chr(x) for x in range(32,127) ), 127) ])
+
+f = font.Font()
+#f.print_glyphs()
 
 i=0
 t0 = time.time()

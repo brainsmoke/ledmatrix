@@ -9,7 +9,7 @@ def calc_q(x):
 	return int( int( x%144 == 0 ) * 255 )
 
 def next_frame(i, t):
-	return [ calc_b(x+i) for y in range(8) for x in range(WIDTH) ]
+	return [ calc_b(y+i) for y in range(144) for x in range(24) ]
 	#return [ calc_q(x+i) for y in range(8) for x in range(WIDTH) ]
 #	return [ 255*int(x>i) for y in range(8) for x in range(432) ]
 #	return [ 16*y for y in range(8) for x in range(144*3) ]

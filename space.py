@@ -39,7 +39,7 @@ class SpaceAni(object):
 
 	def new_text(self):
 		self.text_x = self.w+10
-		self.text = ''.join(self.text_source.get_line())
+		self.text = self.text_source.get_line()
 		self.text_size = self.font.text_size(self.text)/2
 
 	def move_text(self):

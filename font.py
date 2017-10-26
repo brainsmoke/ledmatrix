@@ -48,7 +48,7 @@ class Font(object):
 
 		self.chars = {}
 		self.width = {}
-		for x in range(32, 127):
+		for x in range(32, 128):
 			self.chars[chr(x)], self.width[chr(x)] = self.extract(x-32, 0, 16, 16, 1, 2, w, h, d)
 		self.width[' '] = 9
 
@@ -56,6 +56,11 @@ class Font(object):
 		return sum(self.get_glyph(c)[1] for c in text)
 
 	def get_glyph(self, c):
+		if c not in self.chars:
+			if ord(c) < 32:
+				c = ' '
+			else:
+				c = chr(127)
 		return (self.chars[c], self.width[c]+1.2)
 
 	def print_glyphs(self):

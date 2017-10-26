@@ -31,7 +31,7 @@ SHIPS = [
 class SpaceAni(object):
 
 	def move_ship(self):
-		self.ship_x += self.dx/16
+		self.ship_x += self.dx/8
 		if self.ship_x > self.w + 400:
 			self.ship_x = -random.randint(30, 80)
 			self.new_dx = 1.
@@ -71,7 +71,7 @@ class SpaceAni(object):
 		off = 0
 		for i,c in enumerate(self.text):
 			g, keming = self.font.get_glyph(c)
-			self.paint_wide_bitmap(x+off/2.,0,g, 192)
+			self.paint_wide_bitmap(x+off/2.,0,g, 160)
 			off += keming
 
 	def paint_ship(self, x):

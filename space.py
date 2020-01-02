@@ -40,7 +40,7 @@ class SpaceAni(object):
 	def new_text(self):
 		self.text_x = self.w+10
 		self.text = self.text_source.get_line()
-		self.text_size = self.font.text_size(self.text)/2
+		self.text_size = self.font.text_size(self.text)//2
 
 	def move_text(self):
 		self.text_x -= self.dx/16
@@ -65,7 +65,7 @@ class SpaceAni(object):
 					c0 = a0*intensity + self.frame[base+x]*(255-a0)
 					c1 = a1*intensity + self.frame[base+x]*(255-a1)
 					r0, r1 = 1-ratio, ratio
-					self.frame[base+x] = int(r0*c0 + r1*c1)/255
+					self.frame[base+x] = int(r0*c0 + r1*c1)//255
 
 	def paint_text(self, x):
 		off = 0
@@ -118,7 +118,7 @@ class SpaceAni(object):
 			self.next_dx_change = random.randint(300, 1000)
 
 	def clear(self):
-		for i in xrange(len(self.frame)):
+		for i in range(len(self.frame)):
 			self.frame[i]=0
 
 	def __init__(self, w, h, text_source):
@@ -190,6 +190,6 @@ t0 = time.time()
 while True:
 	i+=1
 	i%=120
-	sys.stdout.write(''.join(chr((x/2)&0x7f) for x in ani.next_frame(i, time.time()-t0))+"\x80")
+	sys.stdout.buffer.write(bytes( ((x//2)&0x7f) for x in ani.next_frame(i, time.time()-t0))+b"\x80")
 	sys.stdout.flush()
 	time.sleep(.005)

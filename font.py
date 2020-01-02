@@ -11,7 +11,7 @@ class Font(object):
 		for py in range(y*h,(y+1)*h,dy):
 			row = []
 			for px in range(x*w,(x+1)*w,dx):
-				n = ord(data[px + py*img_w])
+				n = int(data[px + py*img_w])
 				row.append(n)
 				if n > 0 and max_ < len(row):
 					max_ = len(row)
@@ -26,25 +26,25 @@ class Font(object):
 		def readline_skip_comments(f):
 			while True:
 				l = f.readline()
-				if l[0] != '#':
+				if l[0:1] != b'#':
 					return l
 
-		f = open("font/nyqfont.pgm", 'r')
+		f = open("font/nyqfont.pgm", 'rb')
 
-		if readline_skip_comments(f) != "P5\n":
-			print "wrong format"
+		if readline_skip_comments(f) != b"P5\n":
+			print ("wrong format")
 			sys.exit(1)
 
-		w,h = [ int(x) for x in readline_skip_comments(f).split(' ') ]
+		w,h = [ int(x) for x in readline_skip_comments(f).split(b' ') ]
 
-		if readline_skip_comments(f) != "255\n":
+		if readline_skip_comments(f) != b"255\n":
 			sys.exit(1)
 
 		d = bytes(f.read())
 		f.close()
 
 		if len(d) != w*h:
-			print "bad size"
+			print ("bad size")
 
 		self.chars = {}
 		self.width = {}
@@ -64,9 +64,9 @@ class Font(object):
 		return (self.chars[c], self.width[c]+1.2)
 
 	def print_glyphs(self):
-		print self.chars
+		print (self.chars)
 		for i in self.chars.keys():
-			print i
+			print (i)
 			for l in self.chars[i]:
-				print ''.join("%2x " % (x,) for x in l)
+				print (''.join('{:2x}'.format(x) for x in l))
 

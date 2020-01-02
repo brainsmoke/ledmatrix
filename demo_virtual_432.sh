@@ -1,2 +1,2 @@
 #!/bin/sh
-python space144.py | python virtual/virtualbar.py 432 8
+python3 space144.py | python3 virtual/virtualbar.py 432 8

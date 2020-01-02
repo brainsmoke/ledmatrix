@@ -22,6 +22,6 @@ t0 = time.time()
 while True:
 	i+=1
 	i%=144*3
-	sys.stdout.write(''.join(chr((x/2)&0x7f) for x in next_frame(i, time.time()-t0))+"\x80")
+	sys.stdout.buffer.write(bytes( ((x//2)&0x7f) for x in next_frame(i, time.time()-t0))+b"\x80")
 	sys.stdout.flush()
 	time.sleep(.005)

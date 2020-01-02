@@ -83,7 +83,7 @@ class SpaceAni(object):
 			self.next_dx_change = random.randint(300, 1000)
 
 	def clear(self):
-		for i in xrange(len(self.frame)):
+		for i in range(len(self.frame)):
 			self.frame[i]=0
 
 	def __init__(self, w, h):
@@ -115,6 +115,6 @@ t0 = time.time()
 while True:
 	i+=1
 	i%=432
-	sys.stdout.write(''.join(chr((x/2)&0x7f) for x in ani.next_frame(i, time.time()-t0))+"\x80")
+	sys.stdout.buffer.write(bytes( ((x//2)&0x7f) for x in ani.next_frame(i, time.time()-t0))+b"\x80")
 	sys.stdout.flush()
 	time.sleep(.005)

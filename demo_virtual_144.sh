@@ -1,2 +1,2 @@
 #!/bin/sh
-python gradient144.py | python virtual/virtualbar.py 144 24
+python3 gradient144.py | python3 virtual/virtualbar.py 144 24

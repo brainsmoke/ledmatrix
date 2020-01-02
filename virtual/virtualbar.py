@@ -13,9 +13,9 @@ if __name__ == '__main__':
     h = 600
 
     if width*h > height*w:
-        h = int(w*height/width)
+        h = int(w*height//width)
     else:
-        w = int(h*width/height)
+        w = int(h*width//height)
 
     dotsize = int(7.5*w/width/10)
 
@@ -25,15 +25,15 @@ if __name__ == '__main__':
     pixels = [ (xmin+x*dx,ymin+y*dy) for y in range(height) for x in range(width) ]
 
     v = virtualdisplay.VirtualDisplay(pixels, (w,h), dotsize=dotsize, inverse_gamma=1)
-    s = ''
+    s = b''
     while True:
-        s = s+sys.stdin.read(len(pixels)+1)
-        if s == '':
+        s = s+sys.stdin.buffer.read(len(pixels)+1)
+        if s == b'':
             break
         last=0
         for i,c in enumerate(s):
-            if ord(c) & 0x80:
-                v.write(''.join(chr((ord(c)&0x7f)*2)+"\0\0" for c in s[last:i+1][:len(pixels)]))
+            if c & 0x80:
+                v.write(bytes( (c&0x7f)*2*q for c in s[last:i+1][:len(pixels)] for q in (1,0,0) ))
                 last = i+1
 
         s = s[last:]

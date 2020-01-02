@@ -15,7 +15,7 @@ class VirtualDisplay(object):
         self.screen = pygame.display.set_mode(windowsize, pygame.RESIZABLE|pygame.DOUBLEBUF)
         pygame.key.set_repeat(500,25)
         self.screen.fill(black)
-        self.gamma_map = tuple( int( (x/255.)**(1/inverse_gamma) * 255. ) for x in xrange(256) )
+        self.gamma_map = tuple( int( (x/255.)**(1/inverse_gamma) * 255. ) for x in range(256) )
 
     def draw_led(self, surf, x, y, color, r):
          pygame.draw.circle(surf, color, (x, y), r)
@@ -24,8 +24,8 @@ class VirtualDisplay(object):
         surf = pygame.display.get_surface()
         r = int(self.dotsize*self.h/2.)
 
-        for i in xrange(min(len(self.pixels), len(data)/3)):
-            color = tuple( self.gamma_map[ord(x)] for x in data[i*3:i*3+3] )
+        for i in range(min(len(self.pixels), len(data)//3)):
+            color = tuple( self.gamma_map[x] for x in data[i*3:i*3+3] )
             x, y = self.pixels[i]
             self.draw_led(surf, int(x*self.w), int(y*self.h), color, r)
 

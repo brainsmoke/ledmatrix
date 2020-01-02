@@ -1,4 +1,4 @@
 #!/bin/sh
 
 stty -F /dev/ttyACM0 raw
-python gradient144.py > /dev/ttyACM0
+python3 gradient144.py > /dev/ttyACM0
